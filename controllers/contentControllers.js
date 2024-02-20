@@ -4,13 +4,14 @@ const { ACTIONS } = require("../data/utils");
 
 const handleTransactions = async (req, res) => {
   try {
-    let action = req?.body?.action;
-    let userName = action?.payload?.userName;
+    const action = req?.body?.action;
+    const userName = action?.payload?.userName;
+    const { type, payload } = action;
 
     let userID = await getUserID(userName);
     if (!userID) return res.sendStatus(401);
 
-    console.log("Transaction:", action.type);
+    console.log("Transaction:", type);
 
     switch (type) {
       case ACTIONS.GET_TRANSACTION: {
