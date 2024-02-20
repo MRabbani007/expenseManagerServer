@@ -12,10 +12,9 @@ const handleTransactions = async (req, res) => {
     if (!userID) return res.sendStatus(401);
 
     console.log("Transaction:", type);
-
     switch (type) {
       case ACTIONS.GET_TRANSACTION: {
-        let data = Transaction.find({
+        let data = await Transaction.find({
           userID: userID,
           date: {
             $gte: new Date(payload.startDate),

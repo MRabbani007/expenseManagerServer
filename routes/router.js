@@ -10,6 +10,7 @@ router.use("/user", userRouter);
 
 // Verify JWT Middleware applies to website content
 router.use(verifyJWT);
+
 router.use("/transaction", transactionRouter);
 
 module.exports = router;
