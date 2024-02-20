@@ -1,8 +1,17 @@
 const Transaction = require("../db_schemas/transaction");
-const { getDate, ACTIONS } = require("./utils");
+const { getUserID } = require("./userControllers");
+const { ACTIONS } = require("../data/utils");
 
-const handleTransactions = (userID, { type, payload }) => {
+const handleTransactions = async (req, res) => {
   try {
+    let action = req?.body?.action;
+    let userName = action?.payload?.userName;
+
+    let userID = await getUserID(userName);
+    if (!userID) return res.sendStatus(401);
+
+    console.log("Transaction:", action.type);
+
     switch (type) {
       case ACTIONS.GET_TRANSACTION: {
         let data = Transaction.find({
@@ -12,10 +21,10 @@ const handleTransactions = (userID, { type, payload }) => {
             $lte: new Date(payload.endDate),
           },
         });
-        if (!!data) {
-          return data;
+        if (!data) {
+          return res.status(200).json([]);
         } else {
-          return [];
+          return res.status(200).json(data);
         }
       }
       case ACTIONS.ADD_TRANSACTION: {
@@ -40,8 +49,10 @@ const handleTransactions = (userID, { type, payload }) => {
           amount: amount,
           currency: currency,
         });
-        newTransaction.save();
-        return "success";
+        let data = await newTransaction.save();
+        return res
+          .status(200)
+          .json({ status: "success", message: "transaction removed" });
       }
       case ACTIONS.EDIT_TRANSACTION: {
         let {
@@ -54,7 +65,7 @@ const handleTransactions = (userID, { type, payload }) => {
           amount,
           currency,
         } = payload.transaction;
-        Transaction.updateOne(
+        let data = Transaction.updateOne(
           {
             userID: userID,
             id: id,
@@ -71,21 +82,28 @@ const handleTransactions = (userID, { type, payload }) => {
             },
           }
         ).exec();
-        return "success";
+        return res
+          .status(204)
+          .json({ status: "success", message: "transaction updated" });
       }
       case ACTIONS.REMOVE_TRANSACTION: {
-        Transaction.deleteOne({
+        let data = Transaction.deleteOne({
           userID: userID,
           id: payload.transactionId,
         }).exec();
-        return "success";
+        return res
+          .status(204)
+          .json({ status: "success", message: "transaction removed" });
       }
       default: {
+        return res
+          .status(204)
+          .json({ status: "failed", message: "action not found" });
       }
     }
   } catch (error) {
     console.log(error);
-    return "Error";
+    return res.status(500).json({ status: "error", message: "Server Error" });
   }
 };
 

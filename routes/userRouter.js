@@ -1,42 +1,47 @@
 const express = require("express");
-const { signInUser, signUpUser } = require("../functions/userFunctions");
+const verifyRoles = require("../middleware/verifyRoles");
+const {
+  handleSignIn,
+  handleSignUp,
+  handleSignOut,
+  handleRefreshToken,
+  handleGetUsers,
+  handleUserGetSettings,
+  handleUserEditSettings,
+  handleUserDescriptions,
+  handleUserPassword,
+} = require("../controllers/userControllers");
 const userRouter = express();
 
-userRouter.get("/", async (req, res) => {
-  res.json("Get User");
-});
-
-userRouter.post("/", async (req, res) => {
-  res.json("Get User");
-});
+// Signup Request
+userRouter.post("/register", handleSignUp);
 
 // Signin Request
-userRouter.post("/signin", async (req, res) => {
-  // TODO: Implement Signin
-  let result = "";
-  // get username and password from client
-  let clientusername = req.body.username;
-  let clientpassword = req.body.password;
-  console.log("Signin Request", clientusername, clientpassword);
-  result = (await signInUser(clientusername, clientpassword)) || "error";
-  res.json(result);
-});
+userRouter.post("/auth", handleSignIn);
 
-// Signup Request
-userRouter.post("/signup", async (req, res) => {
-  // TODO: Implement Signup
-  let result = "";
-  // get username and password from client
-  let clientusername = req.body.username;
-  let clientpassword = req.body.password;
-  console.log("Signup Request", clientusername, clientpassword);
-  result = await signUpUser(clientusername, clientpassword);
-  res.json(result);
-});
+// Signout Request
+userRouter.post("/logout", handleSignOut);
 
-userRouter.post("/?", (req, res) => {
+// Refresh Access Token
+userRouter.get("/refresh", handleRefreshToken);
+
+userRouter.route("/admin").post(verifyRoles(5150), handleGetUsers);
+
+userRouter
+  .route("/settings")
+  .post(verifyRoles(2001), handleUserGetSettings)
+  .put(verifyRoles(2001), handleUserEditSettings);
+
+userRouter
+  .route("/descriptions")
+  .post(verifyRoles(2001), handleUserDescriptions)
+  .put(verifyRoles(2001), handleUserDescriptions);
+
+userRouter.route("/pwd").post(verifyRoles(2001), handleUserPassword);
+
+userRouter.post("/*", (req, res) => {
   console.log(req.params.name);
-  res.json(req.params.name);
+  res.json("Server Running");
 });
 
 module.exports = userRouter;

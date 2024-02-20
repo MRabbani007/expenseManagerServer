@@ -59,17 +59,4 @@ const signUpUser = async (clientusername, clientpassword) => {
 // TODO: Implement updates to user
 const updateUser = async (username, updateType, updateData) => {};
 
-const getUserID = async (username) => {
-  try {
-    const data = await user.find({ username: username });
-    if (data.length !== 0) {
-      return data[0].id;
-    } else {
-      return "123";
-    }
-  } catch (error) {
-    console.log("Error: get user ID");
-  }
-};
-
-module.exports = { signInUser, signUpUser, getUserID };
+module.exports = { signInUser, signUpUser };

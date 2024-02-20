@@ -1,18 +1,15 @@
 const express = require("express");
-const router = express();
+const verifyJWT = require("../middleware/verifyJWT");
 
+const router = express();
 const userRouter = require("./userRouter");
 const transactionRouter = require("./transactionRouter");
 
+// Handle user registration and authentication
 router.use("/user", userRouter);
+
+// Verify JWT Middleware applies to website content
+router.use(verifyJWT);
 router.use("/transaction", transactionRouter);
-
-router.get("/", (req, res) => {
-  res.json("Server Running");
-});
-
-router.post("/", (req, res) => {
-  res.json("Server Running");
-});
 
 module.exports = router;
