@@ -5,12 +5,12 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-import connectDB from "./config/dbConn";
-import corsOptions from "./config/corsOptions";
-import credentials from "./middleware/credentials";
-import { logger } from "./middleware/logEvents";
-import { errorHandler } from "./middleware/errorHandler";
-import router from "./routes/router";
+import connectDB from "./config/dbConn.js";
+import corsOptions from "./config/corsOptions.js";
+import credentials from "./middleware/credentials.js";
+import { logger } from "./middleware/logEvents.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+import router from "./routes/router.js";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory

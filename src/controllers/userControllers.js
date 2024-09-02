@@ -1,11 +1,9 @@
-import { RequestHandler, Response } from "express";
-import user from "../db_schemas/user";
+import user from "../db_schemas/user.js";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { TypedRequest } from "../types";
 
-export const handleSignUp: RequestHandler = async (req, res) => {
+export const handleSignUp = async (req, res) => {
   try {
     let { username, password } = req.body.payload;
 
@@ -47,7 +45,7 @@ export const handleSignUp: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleSignIn: RequestHandler = async (req, res) => {
+export const handleSignIn = async (req, res) => {
   try {
     const { username, password } = req?.body;
 
@@ -127,7 +125,7 @@ export const handleSignIn: RequestHandler = async (req, res) => {
   }
 };
 
-export const handleRefreshToken = async (req: TypedRequest, res: Response) => {
+export const handleRefreshToken = async (req, res) => {
   try {
     const cookies = req.cookies;
 
@@ -153,7 +151,7 @@ export const handleRefreshToken = async (req: TypedRequest, res: Response) => {
     jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
-      (error: any, decoded: any) => {
+      (error, decoded) => {
         if (error || !decoded || foundUser.username !== decoded.username) {
           res.sendStatus(403);
           return;
@@ -180,7 +178,7 @@ export const handleRefreshToken = async (req: TypedRequest, res: Response) => {
   }
 };
 
-export const handleSignOut: RequestHandler = async (req, res) => {
+export const handleSignOut = async (req, res) => {
   try {
     const cookies = req.cookies;
     // const username = req.body.username;
@@ -222,7 +220,7 @@ export const handleSignOut: RequestHandler = async (req, res) => {
   }
 };
 
-const handleUserDescriptions: RequestHandler = async (req, res) => {
+const handleUserDescriptions = async (req, res) => {
   return res.sendStatus(204);
   // try {
   //   const action = req?.body?.action;
@@ -283,7 +281,7 @@ const handleUserDescriptions: RequestHandler = async (req, res) => {
   // }
 };
 
-const handleUserPassword: RequestHandler = async (req, res) => {
+const handleUserPassword = async (req, res) => {
   try {
     let { type, payload } = req.body.action;
     let { username, password, newPassword } = payload;
@@ -326,7 +324,7 @@ const handleUserPassword: RequestHandler = async (req, res) => {
   }
 };
 
-export const getUserID = async (username: string) => {
+export const getUserID = async (username) => {
   try {
     const data = await user.find({ username: username });
     if (data.length !== 0) {
@@ -340,7 +338,7 @@ export const getUserID = async (username: string) => {
 };
 
 // Get user details for admin
-const handleGetUsers: RequestHandler = async (req, res) => {
+const handleGetUsers = async (req, res) => {
   try {
     const data = await user.find(
       {},
@@ -355,7 +353,7 @@ const handleGetUsers: RequestHandler = async (req, res) => {
 };
 
 // Get settings for user
-const handleUserGetSettings: RequestHandler = async (req, res) => {
+const handleUserGetSettings = async (req, res) => {
   try {
     const username = req?.body?.username;
 
@@ -375,7 +373,7 @@ const handleUserGetSettings: RequestHandler = async (req, res) => {
   }
 };
 
-const handleUserEditSettings: RequestHandler = async (req, res) => {
+const handleUserEditSettings = async (req, res) => {
   try {
     const action = req?.body?.action;
     const { type, payload } = action;

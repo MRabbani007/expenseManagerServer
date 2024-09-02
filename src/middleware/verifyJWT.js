@@ -1,18 +1,18 @@
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
-import { NextFunction, RequestHandler, Response } from "express";
-import { Credentials, TypedRequest } from "../types";
 
 dotenv.config();
 
-export default function verifyJWT(
-  req: Request & { authorization: string },
-  res: Response,
-  next: NextFunction
-) {
+// req: Request & { headers: { authorization: string } } & {
+//   user: { username: string; roles: number[] };
+// },
+// res: Response,
+// next: NextFunction
+
+export default function verifyJWT(req, res, next) {
   if (!process.env?.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
 
-  const authHeader = req.headers?.authorization || req.headers?.Authorization;
+  const authHeader = req.headers?.authorization; // || req.headers?.Authorization;
 
   if (!authHeader) return res.sendStatus(401);
 
@@ -27,11 +27,11 @@ export default function verifyJWT(
       return res.sendStatus(403); // forbiden: invalid Token
     }
 
-    const cred = decoded as Credentials;
+    const cred = decoded;
 
     req.user = {
       username: cred?.username ?? "",
-      roles: cred?.roles ?? "",
+      roles: cred?.roles ?? [],
     };
 
     next();

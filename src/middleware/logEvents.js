@@ -4,7 +4,6 @@ import { v4 } from "uuid";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import { NextFunction, Request, Response } from "express";
 import { fileURLToPath } from "url";
 
 const uuid = v4;
@@ -12,7 +11,7 @@ const uuid = v4;
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
 
-export const logEvents = async (message: string, logName: string) => {
+export const logEvents = async (message, logName) => {
   const dateTime = `${format(new Date(), "yyyyMMdd\tHH:mm:ss")}`;
   const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
 
@@ -30,7 +29,7 @@ export const logEvents = async (message: string, logName: string) => {
   }
 };
 
-export const logger = (req: Request, res: Response, next: NextFunction) => {
+export const logger = (req, res, next) => {
   logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, "reqLog.txt");
   // console.log(`${req.method} ${req.path}`);
   next();

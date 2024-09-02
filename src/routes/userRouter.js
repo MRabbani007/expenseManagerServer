@@ -1,11 +1,11 @@
-import { Router, RequestHandler } from "express";
-import verifyRoles from "../middleware/verifyRoles";
+import { Router } from "express";
+import verifyRoles from "../middleware/verifyRoles.js";
 import {
   handleSignUp,
   handleSignIn,
   handleSignOut,
   handleRefreshToken,
-} from "../controllers/userControllers";
+} from "../controllers/userControllers.js";
 
 const userRouter = Router();
 

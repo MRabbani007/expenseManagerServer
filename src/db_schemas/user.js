@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
-import { User } from "../types";
 
 // Schema for User Documents
-const userSchema = new mongoose.Schema<User>(
+const userSchema = new mongoose.Schema(
   {
     id: { type: String, required: false },
     username: { type: String, required: false },

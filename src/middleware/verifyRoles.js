@@ -1,8 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { TypedRequest } from "../types";
-
-export default function verifyRoles(...allowedRoles: number[]) {
-  return (req: Request, res: Response, next: NextFunction) => {
+export default function verifyRoles(...allowedRoles) {
+  return (req, res, next) => {
     if (!req?.user?.roles) {
       return res.sendStatus(401);
     }

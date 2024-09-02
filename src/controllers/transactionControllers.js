@@ -1,10 +1,7 @@
-import { RequestHandler, Response } from "express";
+import Transaction from "../db_schemas/transaction.js";
+import { getUserID } from "./userControllers.js";
 
-import Transaction from "../db_schemas/transaction";
-import { getUserID } from "./userControllers";
-import { TypedRequest } from "../types";
-
-export const getTransactions = async (req: TypedRequest, res: Response) => {
+export const getTransactions = async (req, res) => {
   try {
     const username = req?.user?.username;
 
@@ -13,8 +10,8 @@ export const getTransactions = async (req: TypedRequest, res: Response) => {
     let userID = await getUserID(username);
     if (!userID) return res.sendStatus(401);
 
-    const startDate = (req?.query?.startDate ?? "") as string;
-    const endDate = (req?.query?.endDate ?? "") as string;
+    const startDate = req?.query?.startDate ?? "";
+    const endDate = req?.query?.endDate ?? "";
 
     let data = await Transaction.find({
       userID: userID,
@@ -34,7 +31,7 @@ export const getTransactions = async (req: TypedRequest, res: Response) => {
   }
 };
 
-export const addTransaction = async (req: TypedRequest, res: Response) => {
+export const addTransaction = async (req, res) => {
   try {
     const username = req?.user?.username;
     const transaction = req?.body?.transaction;
@@ -65,7 +62,7 @@ export const addTransaction = async (req: TypedRequest, res: Response) => {
   }
 };
 
-export const editTransaction = async (req: TypedRequest, res: Response) => {
+export const editTransaction = async (req, res) => {
   try {
     const username = req?.user?.username;
     const transaction = req?.body?.transaction;
@@ -102,7 +99,7 @@ export const editTransaction = async (req: TypedRequest, res: Response) => {
   }
 };
 
-export const deleteTransaction = async (req: TypedRequest, res: Response) => {
+export const deleteTransaction = async (req, res) => {
   try {
     const action = req?.body?.action;
     const userName = action?.payload?.userName;
