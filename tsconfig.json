@@ -11,7 +11,7 @@
   },
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Recommended",
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "server.js"],
   "exclude": ["node_modules", "**/*.spec.ts"],
   "ts-node": {
     "esm": true,

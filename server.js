@@ -5,17 +5,17 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-import connectDB from "./config/dbConn.js";
-import corsOptions from "./config/corsOptions.js";
-import credentials from "./middleware/credentials.js";
-import { logger } from "./middleware/logEvents.js";
-import { errorHandler } from "./middleware/errorHandler.js";
-import router from "./routes/router.js";
+import connectDB from "./src/config/dbConn.js";
+import corsOptions from "./src/config/corsOptions.js";
+import credentials from "./src/middleware/credentials.js";
+import { logger } from "./src/middleware/logEvents.js";
+import { errorHandler } from "./src/middleware/errorHandler.js";
+import router from "./src/routes/router.js";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
 
-dotenv.config({ path: path.resolve(`${__dirname}/config/.env`) });
+dotenv.config({ path: path.resolve(`${__dirname}/src/config/.env`) });
 
 const app = express();
 

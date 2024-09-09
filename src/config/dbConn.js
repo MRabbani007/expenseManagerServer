@@ -13,6 +13,7 @@ export default async function connectDB() {
       // useNewUrlParser: true,
     });
   } catch (err) {
+    console.log(err);
     console.error("Error Connecting to DB");
   }
 }
