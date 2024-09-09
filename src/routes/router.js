@@ -15,6 +15,7 @@ import {
   editDescription,
   getDescriptions,
 } from "../controllers/descriptionControllers.js";
+import { handleGetUsers } from "../controllers/userControllers.js";
 
 const router = Router();
 
@@ -42,5 +43,7 @@ router
   .post(createDescription)
   .patch(editDescription)
   .delete(deleteDescription);
+
+router.route("/admin/users").get(handleGetUsers);
 
 export default router;

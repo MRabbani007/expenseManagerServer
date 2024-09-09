@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const handleSignUp = async (req, res) => {
   try {
-    let { username, password } = req.body.payload;
+    let { username, password } = req.body;
 
     if (!username || !password) {
       return res
@@ -41,6 +41,7 @@ export const handleSignUp = async (req, res) => {
 
     return res.status(201);
   } catch (error) {
+    console.log(error);
     return res.sendStatus(500);
   }
 };
@@ -359,18 +360,21 @@ export const getUserID = async (username) => {
 };
 
 // Get user details for admin
-const handleGetUsers = async (req, res) => {
+export const handleGetUsers = async (req, res) => {
   try {
     const data = await User.find(
       {},
-      { password: 0, accessToken: 0, refreshToken: 0 }
+      { password: 0, accessToken: 0, refreshToken: 0, descriptions: 0 }
     );
-    if (data.length !== 0) {
-      return res.status(200).json(data);
-    } else {
+
+    if (data.length === 0) {
       return res.sendStatus(204);
     }
-  } catch (error) {}
+
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 };
 
 // Get settings for user
