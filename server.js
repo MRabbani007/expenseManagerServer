@@ -11,6 +11,7 @@ import credentials from "./src/middleware/credentials.js";
 import { logger } from "./src/middleware/logEvents.js";
 import { errorHandler } from "./src/middleware/errorHandler.js";
 import router from "./src/routes/router.js";
+import { corsMiddleware } from "./src/middleware/corsMiddleware.js";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -35,33 +36,9 @@ app.use(credentials);
 app.use(cors(corsOptions));
 app.options("*", cors());
 
-// app.use(function (req, res, next) {
-//   const origin =
-//     req?.headers?.origin === "http://localhost:5173"
-//       ? "http://localhost:5173"
-//       : req?.headers?.origin === "https://mrabbani007.github.io"
-//       ? "https://mrabbani007.github.io"
-//       : "http://foo.io";
-
-//   res.header("Access-Control-Allow-Origin", origin);
-//   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Content-Type, Authorization, Content-Length, X-Requested-With"
-//   );
-//   //intercepts OPTIONS method
-//   if ("OPTIONS" === req.method) {
-//     console.log("options method");
-//     //respond with 200
-//     return res.sendStatus(200);
-//   } else {
-//     //move on
-//     next();
-//   }
-// });
+app.use(corsMiddleware);
 
 // built-in middleware to handle urlencoded form data
-
 app.use(express.urlencoded({ extended: true }));
 
 // built-in middleware for json
