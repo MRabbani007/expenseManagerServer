@@ -120,7 +120,6 @@ export const handleSignIn = async (req, res) => {
       accessToken,
     });
   } catch (error) {
-    console.log(error);
     res.sendStatus(500);
   }
 };
