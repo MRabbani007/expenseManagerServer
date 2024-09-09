@@ -17,12 +17,15 @@ export const createDescription = async (req, res) => {
   try {
     const description = req?.body?.description;
 
-    let { id, label, value, category, icon } = description;
+    let { id, label, value, category, categoryID, isSelected, icon } =
+      description;
 
     const data = await Description.create({
       id,
       label,
       category,
+      categoryID,
+      isSelected,
       value,
       icon,
     });
@@ -39,14 +42,15 @@ export const editDescription = async (req, res) => {
 
     if (!description) return res.sendStatus(400);
 
-    let { id, label, value, category, icon } = description;
+    let { id, label, value, category, categoryID, isSelected, icon } =
+      description;
 
     let data = await Description.updateOne(
       {
         id,
       },
       {
-        $set: { label, value, category, icon },
+        $set: { label, value, category, categoryID, isSelected, icon },
       }
     );
 

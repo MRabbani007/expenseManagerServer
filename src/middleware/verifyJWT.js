@@ -1,5 +1,5 @@
-import * as jwt from "jsonwebtoken";
-import * as dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -10,7 +10,9 @@ dotenv.config();
 // next: NextFunction
 
 export default function verifyJWT(req, res, next) {
-  if (!process.env?.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
+  if (!process.env?.ACCESS_TOKEN_SECRET) {
+    return res.sendStatus(500);
+  }
 
   const authHeader = req.headers?.authorization; // || req.headers?.Authorization;
 

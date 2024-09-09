@@ -6,8 +6,12 @@ const descriptionSchema = new mongoose.Schema(
     id: { type: String, required: true, unique: true },
     label: { type: String, required: false, default: "" },
     value: { type: String, required: false, default: "" },
+
     category: { type: String, required: false, default: "" },
+    categoryID: { type: String, required: false, default: "" },
+
     icon: { type: String, required: false, default: "" },
+    isSelected: { type: Boolean, required: false, default: false },
   },
   { timestamps: true }
 );

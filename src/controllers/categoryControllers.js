@@ -17,13 +17,18 @@ export const createCategory = async (req, res) => {
   try {
     const category = req?.body?.category;
 
-    let { id, label, value, icon } = category;
+    let { id, label, value, icon, detail, sortIndex, group, groupNo } =
+      category;
 
     const data = await Category.create({
       id,
       label,
       value,
       icon,
+      detail,
+      sortIndex,
+      group,
+      groupNo,
     });
 
     return res.status(200).json(data);
@@ -38,14 +43,15 @@ export const editCategory = async (req, res) => {
 
     if (!category) return res.sendStatus(400);
 
-    let { id, label, value, icon } = category;
+    let { id, label, value, icon, detail, sortIndex, group, groupNo } =
+      category;
 
     let data = await Category.updateOne(
       {
         id,
       },
       {
-        $set: { label, value, icon },
+        $set: { label, value, icon, detail, sortIndex, group, groupNo },
       }
     );
 

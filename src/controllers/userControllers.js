@@ -1,4 +1,4 @@
-import user from "../db_schemas/user.js";
+import User from "../db_schemas/user.js";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -13,7 +13,7 @@ export const handleSignUp = async (req, res) => {
         .json({ message: "Username and Password are required" });
     }
 
-    const duplicate = await user.findOne({ username: username }).exec();
+    const duplicate = await User.findOne({ username: username }).exec();
     // check if already registered
     if (duplicate) {
       return res.sendStatus(409);
@@ -25,7 +25,7 @@ export const handleSignUp = async (req, res) => {
     const hashedPwd = await bcrypt.hash(password, 10);
 
     // save user to DB
-    const result = await user.create({
+    const result = await User.create({
       id: crypto.randomUUID(),
       username: username,
       password: hashedPwd,
@@ -56,7 +56,7 @@ export const handleSignIn = async (req, res) => {
       });
     }
 
-    let foundUser = await user.findOne({ username: username });
+    let foundUser = await User.findOne({ username: username });
 
     if (!foundUser) {
       return res.sendStatus(401);
@@ -134,11 +134,9 @@ export const handleRefreshToken = async (req, res) => {
     }
 
     const refreshToken = cookies.jwt;
-    const foundUser = await user
-      .findOne({
-        refreshToken: refreshToken,
-      })
-      .exec();
+    const foundUser = await User.findOne({
+      refreshToken: refreshToken,
+    }).exec();
 
     if (!foundUser) {
       return res.sendStatus(403); // forbiden
@@ -188,11 +186,9 @@ export const handleSignOut = async (req, res) => {
 
     // check if refresh token in DB
     const refreshToken = cookies.jwt;
-    const foundUser = await user
-      .findOne({
-        refreshToken: refreshToken,
-      })
-      .exec();
+    const foundUser = await User.findOne({
+      refreshToken: refreshToken,
+    }).exec();
 
     if (!foundUser) {
       res.clearCookie("jwt", {
@@ -220,65 +216,91 @@ export const handleSignOut = async (req, res) => {
   }
 };
 
+export const handleGetDescriptions = async (req, res) => {
+  try {
+    const username = req?.user?.username;
+
+    const data = await User.findOne({ username }, { id: 1, descriptions: 1 });
+
+    if (!data?.id) return res.sendStatus(401);
+
+    return res.status(200).json(data?.descriptions);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+export const handleSetDescriptions = async (req, res) => {
+  try {
+    const username = req?.user?.username;
+    const descriptions = req?.body?.descriptions;
+
+    const data = await User.updateOne({ username }, { $set: { descriptions } });
+
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
 const handleUserDescriptions = async (req, res) => {
-  return res.sendStatus(204);
-  // try {
-  //   const action = req?.body?.action;
-  //   const { type, payload } = action;
-  //   switch (type) {
-  //     case "USER_DESC_GET": {
-  //       let data = await user.findOne(
-  //         { username: payload.username },
-  //         { descriptions: 1 }
-  //       );
-  //       return res.status(200).json({ descriptions: data.descriptions });
-  //     }
-  //     case ACTIONS.USER_DESC_ADD: {
-  //       let data = await user.findOne(
-  //         { username: payload.username },
-  //         { descriptions: 1 }
-  //       );
-  //       let description = payload.description;
-  //       if (!Array.isArray(description)) {
-  //         description = [description];
-  //       }
-  //       temp = data.descriptions.filter(
-  //         (newDesc) =>
-  //           description.findIndex((desc) => desc.name === newDesc.name) < 0
-  //       );
-  //       const newDesc = temp.concat(description);
-  //       user
-  //         .updateOne(
-  //           { username: payload.username },
-  //           { $set: { descriptions: newDesc } }
-  //         )
-  //         .exec();
-  //       return res.status(200).json({ status: "success", message: "added" });
-  //     }
-  //     case ACTIONS.USER_DESC_REMOVE: {
-  //       let data = await user.findOne(
-  //         { username: payload.username },
-  //         { descriptions: 1 }
-  //       );
-  //       const newDesc = data.descriptions.filter(
-  //         (desc) => desc.name !== payload.description.name
-  //       );
-  //       user
-  //         .updateOne(
-  //           { username: payload.username },
-  //           { $set: { descriptions: newDesc } }
-  //         )
-  //         .exec();
-  //       return res.status(200).json({ status: "success", message: "removed" });
-  //     }
-  //     default: {
-  //     }
-  //   }
-  //   res.sendStatus(200);
-  // } catch (error) {
-  //   console.log(error);
-  //   return res.sendStatus(500);
-  // }
+  try {
+    const action = req?.body?.action;
+    const { type, payload } = action;
+    switch (type) {
+      case "USER_DESC_GET": {
+        let data = await user.findOne(
+          { username: payload.username },
+          { descriptions: 1 }
+        );
+        return res.status(200).json({ descriptions: data.descriptions });
+      }
+      case ACTIONS.USER_DESC_ADD: {
+        let data = await user.findOne(
+          { username: payload.username },
+          { descriptions: 1 }
+        );
+        let description = payload.description;
+        if (!Array.isArray(description)) {
+          description = [description];
+        }
+        temp = data.descriptions.filter(
+          (newDesc) =>
+            description.findIndex((desc) => desc.name === newDesc.name) < 0
+        );
+        const newDesc = temp.concat(description);
+        user
+          .updateOne(
+            { username: payload.username },
+            { $set: { descriptions: newDesc } }
+          )
+          .exec();
+        return res.status(200).json({ status: "success", message: "added" });
+      }
+      case ACTIONS.USER_DESC_REMOVE: {
+        let data = await user.findOne(
+          { username: payload.username },
+          { descriptions: 1 }
+        );
+        const newDesc = data.descriptions.filter(
+          (desc) => desc.name !== payload.description.name
+        );
+        user
+          .updateOne(
+            { username: payload.username },
+            { $set: { descriptions: newDesc } }
+          )
+          .exec();
+        return res.status(200).json({ status: "success", message: "removed" });
+      }
+      default: {
+      }
+    }
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
 };
 
 const handleUserPassword = async (req, res) => {
@@ -326,7 +348,7 @@ const handleUserPassword = async (req, res) => {
 
 export const getUserID = async (username) => {
   try {
-    const data = await user.find({ username: username });
+    const data = await User.find({ username: username });
     if (data.length !== 0) {
       return data[0].id;
     } else {
@@ -340,7 +362,7 @@ export const getUserID = async (username) => {
 // Get user details for admin
 const handleGetUsers = async (req, res) => {
   try {
-    const data = await user.find(
+    const data = await User.find(
       {},
       { password: 0, accessToken: 0, refreshToken: 0 }
     );

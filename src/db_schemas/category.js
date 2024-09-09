@@ -7,6 +7,13 @@ const categorySchema = new mongoose.Schema(
     label: { type: String, required: false, default: "" },
     value: { type: String, required: false, default: "" },
     icon: { type: String, required: false, default: "" },
+
+    detail: { type: String, required: false, default: "" },
+    sortIndex: { type: Number, required: false, default: 0 },
+    color: { type: String, required: false, default: "" },
+
+    group: { type: String, required: false, default: "" },
+    groupNo: { type: Number, required: false, default: 0 },
   },
   { timestamps: true }
 );

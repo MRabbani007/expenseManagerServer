@@ -5,7 +5,10 @@ import {
   handleSignIn,
   handleSignOut,
   handleRefreshToken,
+  handleGetDescriptions,
+  handleSetDescriptions,
 } from "../controllers/userControllers.js";
+import verifyJWT from "../middleware/verifyJWT.js";
 
 const userRouter = Router();
 
@@ -23,10 +26,10 @@ userRouter.get("/refresh", handleRefreshToken);
 
 // userRouter.route("/admin").post(verifyRoles(5150), handleGetUsers);
 
-// userRouter
-//   .route("/settings")
-//   .post(verifyRoles(2001), handleUserGetSettings)
-//   .put(verifyRoles(2001), handleUserEditSettings);
+userRouter
+  .route("/descriptions")
+  .get(verifyJWT, verifyRoles(2001), handleGetDescriptions)
+  .patch(verifyJWT, verifyRoles(2001), handleSetDescriptions);
 
 // userRouter
 //   .route("/descriptions")

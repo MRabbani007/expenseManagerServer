@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: false, default: "" },
 
     theme: { type: String, required: false },
-    descriptions: [{ type: Object, required: false }],
+    descriptions: { type: [Object], required: false, default: [] },
 
     active: { type: Boolean, required: false },
     lastSigin: { type: Date, required: false },
@@ -30,6 +30,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const user = mongoose.models?.User ?? mongoose.model("User", userSchema);
+const User = mongoose.models?.User ?? mongoose.model("User", userSchema);
 
-export default user;
+export default User;

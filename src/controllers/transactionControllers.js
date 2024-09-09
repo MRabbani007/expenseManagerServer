@@ -27,6 +27,7 @@ export const getTransactions = async (req, res) => {
       return res.status(200).json(data);
     }
   } catch (error) {
+    console.log(error);
     return res.sendStatus(500);
   }
 };
@@ -58,6 +59,7 @@ export const addTransaction = async (req, res) => {
 
     return res.status(200).json(data);
   } catch (error) {
+    console.log(error);
     return res.sendStatus(500);
   }
 };
