@@ -5,9 +5,14 @@ const transactionSchema = new mongoose.Schema(
   {
     id: { type: String, required: true, unique: true },
     userID: { type: String, required: true },
-    type: { type: String, required: false, default: "" },
+
+    type: { type: String, required: false, default: "" }, // income / expense / transfer
+
     category: { type: String, required: false, default: "" },
     description: { type: String, required: false, default: "" },
+    details: { type: String, required: false, default: "" },
+    notes: { type: String, required: false, default: "" },
+
     date: { type: Date, required: false, default: new Date() },
     paymethod: { type: String, required: false, default: "" },
     amount: { type: Number, required: false, default: 0 },
