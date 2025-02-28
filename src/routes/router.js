@@ -16,6 +16,12 @@ import {
   getDescriptions,
 } from "../controllers/descriptionControllers.js";
 import { handleGetUsers } from "../controllers/userControllers.js";
+import {
+  createAccount,
+  deleteAccount,
+  editAccount,
+  getAccounts,
+} from "../controllers/accountControllers.js";
 
 const router = Router();
 
@@ -29,6 +35,13 @@ router.use("/transaction", transactionRouter);
 
 router.get("/category", getCategories);
 router.get("/description", getDescriptions);
+
+router
+  .route("/account")
+  .get(getAccounts)
+  .post(createAccount)
+  .patch(editAccount)
+  .delete(deleteAccount);
 
 router.use(verifyRoles(5150));
 

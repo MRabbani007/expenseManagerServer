@@ -127,7 +127,6 @@ export const editTransaction = async (req, res) => {
 
     return res.sendStatus(204);
   } catch (error) {
-    console.log(error);
     return res.sendStatus(500);
   }
 };
