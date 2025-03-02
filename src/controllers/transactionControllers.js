@@ -10,6 +10,7 @@ export const getTransactions = async (req, res) => {
     if (!userID) return res.sendStatus(401);
 
     const type = req?.query?.type ?? "latest";
+    const descId = req?.query?.descId;
     const page = +req?.query?.page ?? 1;
     const ipp = req?.query?.ipp ?? 20;
 
@@ -24,6 +25,9 @@ export const getTransactions = async (req, res) => {
         $gte: new Date(startDate),
         $lte: new Date(endDate),
       };
+    }
+    if (descId && descId !== "null") {
+      filters.descId = descId;
     }
 
     const data = await Transaction.find(filters)
@@ -61,6 +65,7 @@ export async function getIncomeAndSpending(req, res) {
     const result = await Transaction.aggregate([
       {
         $match: {
+          userID,
           date: {
             $gte: new Date(startDate),
             $lte: new Date(endDate),
@@ -88,6 +93,7 @@ export async function getIncomeAndSpending(req, res) {
     const breakDown = await Transaction.aggregate([
       {
         $match: {
+          userID,
           date: {
             $gte: new Date(startDate),
             $lte: new Date(endDate),
@@ -97,8 +103,45 @@ export async function getIncomeAndSpending(req, res) {
         },
       },
       {
+        $addFields: {
+          descId: { $toObjectId: "$descId" }, // Convert descId string to ObjectId
+        },
+      },
+      {
+        $lookup: {
+          from: "descriptions", // Collection storing description details
+          localField: "descId",
+          foreignField: "_id",
+          as: "description",
+        },
+      },
+      {
+        $unwind: {
+          path: "$description",
+          preserveNullAndEmptyArrays: true, // Allows missing categories
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "description.categoryID",
+          foreignField: "id",
+          as: "category",
+        },
+      },
+      {
+        $unwind: {
+          path: "$category",
+          preserveNullAndEmptyArrays: true, // Allows missing categories
+        },
+      },
+      {
         $group: {
-          _id: "$category", // Group by category
+          _id: "$descId", // Group by category
+          descLabel: { $first: "$description.label" },
+          descIcon: { $first: "$description.icon" },
+          categoryId: { $first: "$category.id" },
+          categoryLabel: { $first: "$category.label" },
           spending: {
             $sum: { $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0] },
           },
@@ -109,7 +152,7 @@ export async function getIncomeAndSpending(req, res) {
         },
       },
       {
-        $sort: { totalAmount: -1 }, // Sort by highest spending
+        $sort: { spending: -1 }, // Sort by highest spending
       },
     ]);
 
@@ -238,4 +281,12 @@ export const deleteTransaction = async (req, res) => {
   } catch (error) {
     return res.sendStatus(500);
   }
+};
+
+export const debugTransactions = async (req, res) => {
+  try {
+    const data = await Transaction.find({ descId: { $exists: false } });
+
+    return res.json(data);
+  } catch (error) {}
 };
