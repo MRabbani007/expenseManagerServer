@@ -3,6 +3,7 @@ import {
   addTransaction,
   deleteTransaction,
   editTransaction,
+  getIncomeAndSpending,
   getTransactions,
 } from "../controllers/transactionControllers.js";
 
@@ -14,5 +15,7 @@ transactionRouter
   .post(addTransaction)
   .patch(editTransaction)
   .delete(deleteTransaction);
+
+transactionRouter.route("/summary").get(getIncomeAndSpending);
 
 export default transactionRouter;

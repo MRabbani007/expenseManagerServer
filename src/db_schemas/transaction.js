@@ -10,11 +10,15 @@ const transactionSchema = new mongoose.Schema(
 
     category: { type: String, required: false, default: "" },
     description: { type: String, required: false, default: "" },
+    descId: { type: String, ref: "Description", required: false },
     details: { type: String, required: false, default: "" },
     notes: { type: String, required: false, default: "" },
 
     date: { type: Date, required: false, default: new Date() },
+
     paymethod: { type: String, required: false, default: "" },
+    accountId: { type: String, ref: "Account", required: false },
+
     amount: { type: Number, required: false, default: 0 },
     currency: { type: String, required: false, default: "" },
   },
